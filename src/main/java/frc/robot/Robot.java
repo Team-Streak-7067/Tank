@@ -11,6 +11,7 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -27,15 +28,22 @@ public class Robot extends TimedRobot {
 	
 	public Robot() {
 		SparkMaxConfig leftcfg = new SparkMaxConfig();
-		leftcfg.encoder.inverted(true);
+		leftcfg.inverted(true);
+		leftcfg.idleMode(IdleMode.kBrake);
 		leftLeader.configure(leftcfg, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
+		SparkMaxConfig rightcfg = new SparkMaxConfig();
+		rightcfg.idleMode(IdleMode.kBrake);
+		rightLeader.configure(rightcfg, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 		
 		SparkMaxConfig leftFollowerCfg = new SparkMaxConfig();
 		leftFollowerCfg.follow(leftLeader.getDeviceId());
+		leftFollowerCfg.idleMode(IdleMode.kBrake);
 		leftFollower.configure(leftFollowerCfg, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 		
 		SparkMaxConfig rightFollowerCfg = new SparkMaxConfig();
 		rightFollowerCfg.follow(rightLeader.getDeviceId());
+		rightFollowerCfg.idleMode(IdleMode.kBrake);
 		rightFollower.configure(rightFollowerCfg, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 	}
 	
@@ -53,9 +61,9 @@ public class Robot extends TimedRobot {
 	
 	@Override
 	public void teleopPeriodic() {
-		double drive = driver.getLeftX();
+		double drive = driver.getLeftY();
 		drive /= slowBind.get() ? 2 : 1;
-		double steer = driver.getRightY();
+		double steer = driver.getRightX();
 		
 		leftLeader.set(drive-steer);
 		rightLeader.set(drive+steer);
